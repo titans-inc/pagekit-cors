@@ -2,6 +2,7 @@
 
 namespace TitansInc\CORS\Listener;
 
+use Symfony\Component\HttpFoundation\Response;
 use Pagekit\Event\Event;
 use Pagekit\Event\EventSubscriberInterface;
 
@@ -58,7 +59,8 @@ class CORSListener implements EventSubscriberInterface {
         }
 
         if ('OPTIONS' === $request->getMethod()) {
-            //TODO Send Preflight Response
+            $event->setResponse($this->getPreflightResponse($request, $options));
+
             return;
         }
         
@@ -87,6 +89,63 @@ class CORSListener implements EventSubscriberInterface {
         if ($options['expose_headers']) {
             $response->headers->set('Access-Control-Expose-Headers', strtolower(implode(', ', $options['expose_headers'])));
         }
+    }
+
+    protected function getPreflightResponse($request, $options)
+    {
+        $response = new Response();
+        if ($options['allow_credentials']) {
+            $response->headers->set('Access-Control-Allow-Credentials', 'true');
+        }
+        if ($options['allow_methods']) {
+            $response->headers->set('Access-Control-Allow-Methods', implode(', ', $options['allow_methods']));
+        }
+        if ($options['allow_headers']) {
+            $headers = $options['allow_headers'] === true
+                ? $request->headers->get('Access-Control-Request-Headers')
+                : implode(', ', $options['allow_headers']);
+            if ($headers) {
+                $response->headers->set('Access-Control-Allow-Headers', $headers);
+            }
+        }
+        if ($options['max_age']) {
+            $response->headers->set('Access-Control-Max-Age', $options['max_age']);
+        }
+        if (!$this->checkOrigin($request, $options)) {
+            $response->headers->set('Access-Control-Allow-Origin', 'null');
+            return $response;
+        }
+        $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
+        // check request method
+        if (!in_array(strtoupper($request->headers->get('Access-Control-Request-Method')), $options['allow_methods'], true)) {
+            $response->setStatusCode(405);
+            return $response;
+        }
+        /**
+         * We have to allow the header in the case-set as we received it by the client.
+         * Firefox f.e. sends the LINK method as "Link", and we have to allow it like this or the browser will deny the
+         * request.
+         */
+        if (!in_array($request->headers->get('Access-Control-Request-Method'), $options['allow_methods'], true)) {
+            $options['allow_methods'][] = $request->headers->get('Access-Control-Request-Method');
+            $response->headers->set('Access-Control-Allow-Methods', implode(', ', $options['allow_methods']));
+        }
+        // check request headers
+        $headers = $request->headers->get('Access-Control-Request-Headers');
+        if ($options['allow_headers'] !== true && $headers) {
+            $headers = trim(strtolower($headers));
+            foreach (preg_split('{, *}', $headers) as $header) {
+                if (in_array($header, self::$simpleHeaders, true)) {
+                    continue;
+                }
+                if (!in_array($header, $options['allow_headers'], true)) {
+                    $response->setStatusCode(400);
+                    $response->setContent('Unauthorized header '.$header);
+                    break;
+                }
+            }
+        }
+        return $response;
     }
 
 

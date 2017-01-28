@@ -1,6 +1,6 @@
 {
     "name": "titans-inc/pagekit-cors",
-    "version": "1.0.0-alpha-1",
+    "version": "1.0.0-alpha-2",
     "type": "pagekit-extension",
     "title": "CORS",
     "description": "Extenstion to handle Cross-Origin Resource Sharing",
@@ -9,7 +9,7 @@
         {
             "name": "Devi Prasad",
             "email": "deviprsd21@gmail.com",
-            "homepage": "https://github.com/Titans-Inc/CORS"
+            "homepage": "https://github.com/Titans-Inc/pagekit-cors"
         }
     ],
     "extra": {
