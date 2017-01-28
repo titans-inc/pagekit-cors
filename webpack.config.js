@@ -1,10 +1,7 @@
 module.exports = [
     {
         entry: {
-            "quote": "./app/views/admin/quote",
-            "dashboard": "./app/components/dashboard-quote.vue",
-            "toolbar": "./app/views/admin/editor-toolbar",
-            "widget": "./app/components/widget-quote.vue",
+            "settings": "./app/views/admin/settings",
         },
         output: {
             filename: "./app/bundle/[name].js"
