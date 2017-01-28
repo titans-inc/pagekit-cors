@@ -28,7 +28,7 @@ class CORSListener implements EventSubscriberInterface {
 
     public function __construct($app) {
         $this->dispatcher = $app['events'];
-        $this->module = $app['module']('CORS');
+        $this->module = $app['module']('pagekit-cors');
     }
 
     /**

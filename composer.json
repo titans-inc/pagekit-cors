@@ -1,5 +1,5 @@
 {
-    "name": "titans-inc/cors",
+    "name": "titans-inc/pagekit-cors",
     "version": "1.0.0-alpha-1",
     "type": "pagekit-extension",
     "title": "CORS",

@@ -3,7 +3,7 @@
 use Pagekit\Application as App;
 
 return [
-    'name' => 'CORS',
+    'name' => 'pagekit-cors',
     'type' => 'extension',
     'resources' => [
         'cors:' => ''
