@@ -1,1 +1,84 @@
-Will be implemened soon
+{{ view.script('extention-ti-cors-path', 'cors:app/bundle/path-index.js', ['vue']) }}
+
+<div id="path" class="uk-form" v-cloak>
+
+    <div class="uk-margin uk-flex uk-flex-space-between uk-flex-wrap" data-uk-margin>
+        <div class="uk-flex uk-flex-middle uk-flex-wrap" data-uk-margin>
+
+            <h2 class="uk-margin-remove" v-if="!selected.length">
+                {{ "{{ '{0} %count% Paths|{1} %count% Path|]1,Inf[ %count% Paths' | transChoice count {count:count} }}" }}
+            </h2>
+
+            <template v-else>
+
+                <h2 class="uk-margin-remove">
+                   {{ "{{ '{1} %count% Path selected|]1,Inf[ %count% Paths selected' | transChoice selected.length {count:selected.length} }}" }}
+                </h2>
+
+                <div class="uk-margin-left" >
+                    <ul class="uk-subnav pk-subnav-icon">
+                        <li><a class="pk-icon-check pk-icon-hover" title="Enable" data-uk-tooltip="{delay: 500}" @click="status(true)"></a></li>
+                        <li><a class="pk-icon-block pk-icon-hover" title="Disable" data-uk-tooltip="{delay: 500}" @click="status(false)"></a></li>
+                        <li><a class="pk-icon-delete pk-icon-hover" title="Delete" data-uk-tooltip="{delay: 500}" @click="remove" v-confirm="'Delete Paths?'"></a></li>
+                    </ul>
+                </div>
+
+            </template>
+
+            <div class="pk-search">
+                <div class="uk-search">
+                    <input class="uk-search-field" type="text" v-model="config.filter.search" debounce="300">
+                </div>
+            </div>
+
+        </div>
+        <div data-uk-margin>
+
+            <a class="uk-button uk-button-primary" :href="$url.route('admin/cors/path/edit')">
+                {{ "{{ 'Add Path' | trans }}" }}
+            </a>
+
+        </div>
+    </div>
+
+    <div class="uk-overflow-container">
+        <table class="uk-table uk-table-hover uk-table-middle">
+            <thead>
+                <tr>
+                    <th class="pk-table-width-minimum"><input type="checkbox" v-check-all:selected.literal="input[name=id]" number></th>
+                    <th class="pk-table-min-width-200">{{ "{{ 'Path' | trans }}" }}</th>
+                    <th class="pk-table-width-100 uk-text-center">{{ "{{ 'Max Age' | trans }}" }}
+                    <th class="pk-table-width-100 uk-text-center">{{ "{{ 'Credentials' | trans }}" }}
+                    <th class="pk-table-width-100 uk-text-center">{{ "{{ 'Regex' | trans }}" }}
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="check-item" v-for="path in paths" :class="{'uk-active': active(path)}">
+                    <td><input type="checkbox" name="id" :value="path.id"></td>
+                    <td>
+                        <a :href="$url.route('admin/cors/path/edit', { id: path.id })">{{ "{{ path.path }}" }}</a>
+                    </td>
+                    <td class="uk-text-center">{{ "{{ path.max_age }}" }}</td>
+                    <td class="uk-text-center">
+                        <a :class="{
+                            'pk-icon-circle':!path.allow_credentials, 
+                            'pk-icon-circle-success':path.allow_credentials
+                        }" @click.prevent="toggleStatus(path, 'allow_credentials')"></a>
+                    </td>
+                    <td class="uk-text-center">
+                        <a :class="{
+                            'pk-icon-circle':!path.origin_regex, 
+                            'pk-icon-circle-success':path.origin_regex
+                        }" @click.prevent="toggleStatus(path, 'origin_regex')"></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="uk-h1 uk-text-muted uk-text-center" v-show="paths && !paths.length">
+        {{ "{{ 'No paths found.' | trans }}" }}
+    </h3>
+
+    <v-pagination :page.sync="config.page" :pages="pages" v-show="pages > 1 || page > 0"></v-pagination>
+</div>

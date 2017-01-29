@@ -29,8 +29,6 @@ return [
         if ($util->tableExists('@cors_path')) {
             $util->dropTable('@cors_path');
         }
-    },
-
-    'updates' => [] //For future purpose
+    }
 
 ];

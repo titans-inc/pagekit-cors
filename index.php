@@ -31,6 +31,12 @@ return [
         '/cors' => [
             'name' => '@cors',
             'controller' => 'TitansInc\\CORS\\Controller\\CORSController'
+        ],
+        '/api/cors' => [
+            'name' => '@cors/api',
+            'controller' => [
+                'TitansInc\\CORS\\Controller\\PathApiController',
+            ]
         ]
     ],
 
@@ -38,16 +44,16 @@ return [
         'cors' => [
             'label' => 'CORS',
             'icon'  => 'cors:icon.svg',
-            'url' => '@cors/paths',
-            'active' => '@cors/paths*',
+            'url' => '@cors/path',
+            'active' => '@cors/path*',
             'access' => 'system: access settings',
             'priority' => 110
         ],
         'cors: paths' => [
             'label' => 'Paths',
             'parent' => 'cors',
-            'url' => '@cors/paths',
-            'active' => '@cors/paths*',
+            'url' => '@cors/path',
+            'active' => '@cors/path*',
             'access' => 'system: access settings'
         ],
         'cors: settings' => [

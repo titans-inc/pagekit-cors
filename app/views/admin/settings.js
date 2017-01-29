@@ -1,5 +1,7 @@
 module.exports = {
+
     'el' : '#cors',
+
     'data': {
         'cors': window.$data.cors,
         'form': {},
@@ -9,16 +11,19 @@ module.exports = {
         'hosts_new': '',
         'allow_methods_new': ''
     },
+
     'methods' : {
+
         'add' : function(field) {
             if(!this[field + "_new"]) return;
             this.cors[field].push(this[field + "_new"]);
             this[field + "_new"] = '';
         },
+
         'remove' : function(entry, field) {
             this.cors[field].$remove(entry);
-            console.log(this.cors[field]);
         },
+
         'save': function() {
             this.$http.post('admin/cors/save', { cors: this.cors }).then(function () {
                     this.$notify('Settings saved.');
@@ -27,6 +32,7 @@ module.exports = {
                 }
             );
         } 
+        
     }
 }
 
