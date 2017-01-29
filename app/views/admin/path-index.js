@@ -50,7 +50,16 @@ module.exports = {
         },
 
         status: function(status) {
-            this.$notify('Feature soon to be implemented');
+            var paths = this.getSelected();
+
+            for(var i = 0; i < paths.length; i++) {
+                paths[i].status = status;
+            }
+
+            this.resource.save({ id: 'bulk' }, { paths: paths }).then(function () {
+                this.load();
+                this.$notify('Paths saved.');
+            });
         },
 
         remove: function() {

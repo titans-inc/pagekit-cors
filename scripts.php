@@ -11,6 +11,7 @@ return [
                 $table->addColumn('path', 'string', ['length' => 255]);
                 $table->addColumn('allow_credentials', 'boolean', ['default' => false]);
                 $table->addColumn('origin_regex', 'boolean', ['default' => false]);
+                $table->addColumn('status', 'boolean', ['default' => false]);
                 $table->addColumn('max_age', 'integer', ['unsigned' => true, 'default' => 0]);
                 $table->addColumn('forced_allow_origin_value', 'string', ['length' => 255]);
                 $table->addColumn('allow_origin', 'array', ['notnull' => false]);

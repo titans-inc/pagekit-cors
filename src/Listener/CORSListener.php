@@ -5,6 +5,8 @@ namespace TitansInc\CORS\Listener;
 use Symfony\Component\HttpFoundation\Response;
 use Pagekit\Event\Event;
 use Pagekit\Event\EventSubscriberInterface;
+use TitansInc\CORS\Resolver\ConfigResolver;
+use TitansInc\CORS\Model\Path;
 
 class CORSListener implements EventSubscriberInterface {
 
@@ -30,6 +32,7 @@ class CORSListener implements EventSubscriberInterface {
     public function __construct($app) {
         $this->dispatcher = $app['events'];
         $this->module = $app['module']('pagekit-cors');
+        $this->resolver = null;
     }
 
     /**
@@ -42,12 +45,10 @@ class CORSListener implements EventSubscriberInterface {
             return;
         }
 
-        $options = $this->module->config;
-
-        //TODO Implement Configuration Resolver
-        /** if (!$options = $this->configurationResolver($request, $paths)) {
+        $this->resolver = new ConfigResolver($this->module->config, Path::where(['status' => true])->get());
+        if (!$options = $this->resolver->getOptions($request)) {
             return;
-        } */
+        }
 
         if (!empty($options['forced_allow_origin_value'])) {
             $this->dispatcher->on('response', [$this, 'forceAccessControlAllowOriginHeader'], -1);
@@ -72,14 +73,15 @@ class CORSListener implements EventSubscriberInterface {
 
     }
 
-    public function onResponse($event, $request, $response)
-    {
+    public function onResponse($event, $request, $response) {
         // Don't use CORS if not a master request
         if(!$event->isMasterRequest()) {
             return;
         }
 
-        $options = $this->module->config; //TODO Implement Configuration Resolver
+        if (!$options = $this->resolver->getOptions($request)) {
+            return;
+        }
         
         // add CORS response headers
         $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
@@ -150,7 +152,9 @@ class CORSListener implements EventSubscriberInterface {
 
 
     public function forceAccessControlAllowOriginHeader($event, $request, $response) {
-        $options = $this->module->config;
+        if (!$options = $this->resolver->getOptions($request)) {
+            return;
+        }
         $response->headers->set('Access-Control-Allow-Origin', $options['forced_allow_origin_value']);
     }
 

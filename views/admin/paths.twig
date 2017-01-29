@@ -47,9 +47,10 @@
                 <tr>
                     <th class="pk-table-width-minimum"><input type="checkbox" v-check-all:selected.literal="input[name=id]" number></th>
                     <th class="pk-table-min-width-200">{{ "{{ 'Path' | trans }}" }}</th>
-                    <th class="pk-table-width-100 uk-text-center">{{ "{{ 'Max Age' | trans }}" }}
-                    <th class="pk-table-width-100 uk-text-center">{{ "{{ 'Credentials' | trans }}" }}
-                    <th class="pk-table-width-100 uk-text-center">{{ "{{ 'Regex' | trans }}" }}
+                    <th class="pk-table-width-100 uk-text-center">{{ "{{ 'Status' | trans }}" }}</th>
+                    <th class="pk-table-width-100 uk-text-center">{{ "{{ 'Max Age' | trans }}" }}</th>
+                    <th class="pk-table-width-100 uk-text-center">{{ "{{ 'Credentials' | trans }}" }}</th>
+                    <th class="pk-table-width-100 uk-text-center">{{ "{{ 'Regex' | trans }}" }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,6 +58,12 @@
                     <td><input type="checkbox" name="id" :value="path.id"></td>
                     <td>
                         <a :href="$url.route('admin/cors/path/edit', { id: path.id })">{{ "{{ path.path }}" }}</a>
+                    </td>
+                    <td class="uk-text-center">
+                        <a :class="{
+                            'pk-icon-circle':!path.status, 
+                            'pk-icon-circle-success':path.status
+                        }" @click.prevent="toggleStatus(path, 'status')"></a>
                     </td>
                     <td class="uk-text-center">{{ "{{ path.max_age }}" }}</td>
                     <td class="uk-text-center">

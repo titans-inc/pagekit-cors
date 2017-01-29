@@ -20,6 +20,9 @@ class Path {
     /** @Column */
     public $path = '';
 
+    /** @Column(type="boolean") */
+    public $status = false;
+
     /** @Column */
     public $forced_allow_origin_value = '';
 
