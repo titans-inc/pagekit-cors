@@ -59,6 +59,8 @@ return [
         ]
     ],
 
+    'settings' => '@cors/settings',
+
     'events' => [
 
         'boot' => function ($event, $app) {
